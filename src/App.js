@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
+import {
+  BrowserRouter,
+  Route
+} from 'react-router-dom';
 import './App.css';
 import apiKey from './config.js'
 import axios from 'axios';
 
 import Header from './Components/Header';
-import Nav from './Components/Nav'
 import Gallery from './Components/Gallery';
+import SearchForm from './Components/SearchForm';
+
+let searchQuery;
 
 class App extends Component {
 
@@ -21,8 +27,10 @@ class App extends Component {
     this.performSearch();
   }
 
-  performSearch = () => {
-    axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=sunsets&format=json&nojsoncallback=1`)
+  performSearch = query => {
+    console.log("Searching for: " + query);
+    searchQuery = query;
+    axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&format=json&nojsoncallback=1`)
       .then(response => {
         this.setState({
           images: response.data.photos.photo,
@@ -36,22 +44,22 @@ class App extends Component {
 
   render() {
     return (
-      <div className="container">
-        <header>
-          <Header />
-        </header>
+      <BrowserRouter>
+        <div className="container">
 
-        <Nav />
+          <Header search={this.performSearch}/>
+          <Route path={`/search/${searchQuery}`} render={ () => <SearchForm />} />
 
-        <div className="photo-container">
-          <h2>Results</h2>
-          {
-            (this.state.loading)
-              ? <p>Loading...</p>
-              : <Gallery data={this.state.images} />
-          }
+          <div className="photo-container">
+            {
+              (this.state.loading)
+                ? <p>Loading...</p>
+                : <Gallery data={this.state.images}
+                           query={searchQuery}/>
+            }
+          </div>
         </div>
-      </div>
+      </BrowserRouter>
     );
   }
 }
