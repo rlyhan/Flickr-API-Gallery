@@ -3,6 +3,8 @@ import {
   BrowserRouter,
   Route
 } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+
 import './App.css';
 import apiKey from './config.js'
 import axios from 'axios';
@@ -12,6 +14,7 @@ import Gallery from './Components/Gallery';
 import SearchForm from './Components/SearchForm';
 
 let searchQuery;
+const history = createBrowserHistory();
 
 class App extends Component {
 
@@ -30,6 +33,7 @@ class App extends Component {
   performSearch = query => {
     console.log("Searching for: " + query);
     searchQuery = query;
+    history.push(`/search/${query}`);
     axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${query}&format=json&nojsoncallback=1`)
       .then(response => {
         this.setState({
@@ -47,7 +51,8 @@ class App extends Component {
       <BrowserRouter>
         <div className="container">
 
-          <Header search={this.performSearch}/>
+          <Header search={this.performSearch}
+                  history={this.history}/>
           <Route path={`/search/${searchQuery}`} render={ () => <SearchForm />} />
 
           <div className="photo-container">
