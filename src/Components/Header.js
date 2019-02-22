@@ -11,7 +11,8 @@ const Header = (props) => {
     <header>
       <SearchForm search={props.search}
                   history={props.history} />
-      <Nav search={props.search}/>
+      <Nav search={props.search}
+           history={props.history}/>
     </header>
   );
 }

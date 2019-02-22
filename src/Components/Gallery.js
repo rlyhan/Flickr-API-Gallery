@@ -1,11 +1,14 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Image from './Gallery-item';
 
-const Gallery = props => {
+const Gallery = (props) => {
 
   const results = props.data.slice(0, 24);
   let images;
+
+  props.history.push(`/search/${props.query}`);
 
   if (results.length > 0) {
     images = results.map(image =>
@@ -28,5 +31,10 @@ const Gallery = props => {
     );
   }
 }
+
+Gallery.propTypes = {
+  search: PropTypes.func,
+  query: PropTypes.object.isRequired
+};
 
 export default Gallery;

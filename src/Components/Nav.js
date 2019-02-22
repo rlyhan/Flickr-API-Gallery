@@ -1,21 +1,17 @@
 import React from 'react';
-import { Route, NavLink, Redirect } from 'react-router-dom';
-import PropTypes from 'prop-types';
+import { Route,
+         NavLink } from 'react-router-dom';
 
-const Nav = ({search}) => {
+const Nav = (props) => {
   return (
     <nav className="main-nav">
       <ul>
-        <li><NavLink exact to="/dogs" onClick={() => search("dogs")}>Dogs</NavLink></li>
-        <li><NavLink to="/scenery" onClick={() => search("scenery")}>Scenery</NavLink></li>
-        <li><NavLink to="/cars" onClick={() => search("cars")}>Cars</NavLink></li>
+        <li><NavLink to="/dogs" onClick={() => props.search("dogs")}>Dogs</NavLink></li>
+        <li><NavLink to="/scenery" onClick={() => props.search("scenery")}>Scenery</NavLink></li>
+        <li><NavLink to="/cars" onClick={() => props.search("cars")}>Cars</NavLink></li>
       </ul>
     </nav>
   );
 }
-
-Nav.propTypes = {
-  performSearch: PropTypes.func
-};
 
 export default Nav;
