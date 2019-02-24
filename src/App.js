@@ -38,18 +38,20 @@ class App extends Component {
     if (query == null) {
       searchQuery = "new zealand";
     } else {
-      searchQuery = query;
+      if (query != searchQuery) {
+        searchQuery = query;
+        axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${searchQuery}&format=json&nojsoncallback=1`)
+          .then(response => {
+            this.setState({
+              images: response.data.photos.photo,
+              loading: false
+            });
+          })
+          .catch(error => {
+            console.log('Error fetching and parsing data', error);
+          });
+      }
     }
-    axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${searchQuery}&format=json&nojsoncallback=1`)
-      .then(response => {
-        this.setState({
-          images: response.data.photos.photo,
-          loading: false
-        });
-      })
-      .catch(error => {
-        console.log('Error fetching and parsing data', error);
-      });
   }
 
   render() {
@@ -65,9 +67,9 @@ class App extends Component {
               {
                 (this.state.loading)
                   ? <p>Loading...</p>
-                  : <Route path="/" render={ (props) => <Gallery data={this.state.images}
-                                                                 query={searchQuery}
-                                                                 history={history} /> } />
+                  : <Route path="/" render={ () => <Gallery data={this.state.images}
+                                                            query={searchQuery}
+                                                            history={history} /> } />
               }
               <Route path="/search/:query" render={ (props) => <Gallery data={this.state.images}
                                                                         search={this.performSearch(props.match.params.query)}

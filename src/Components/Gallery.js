@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Image from './Gallery-item';
+import NoResults from './NoResults';
 
 const Gallery = (props) => {
 
@@ -23,18 +24,18 @@ const Gallery = (props) => {
       </li>
     );
   } else {
+    props.history.push(`/error`);
     return (
-      <li className="results">
-        <h2>No results found</h2>
-        <p>That search did not return any results, please try again.</p>
-      </li>
+      <NoResults />
     );
   }
 }
 
 Gallery.propTypes = {
+  data: PropTypes.array,
   search: PropTypes.func,
-  query: PropTypes.object.isRequired
+  query: PropTypes.string,
+  history: PropTypes.object
 };
 
 export default Gallery;
