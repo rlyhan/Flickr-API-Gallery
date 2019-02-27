@@ -17,6 +17,7 @@ import Gallery from './Components/Gallery';
 import SearchForm from './Components/SearchForm';
 
 let searchQuery;
+
 const history = createBrowserHistory();
 
 class App extends Component {
@@ -34,24 +35,34 @@ class App extends Component {
   }
 
   performSearch = (query) => {
-    console.log("Searching for: " + query);
+    console.log("new query: " + query);
+    console.log("old searchQuery: " + searchQuery);
     if (query == null) {
-      searchQuery = "new zealand";
+      searchQuery = "mountains";
+      console.log("Searching for " + searchQuery);
+      this.fetchData();
     } else {
       if (query != searchQuery) {
         searchQuery = query;
-        axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${searchQuery}&format=json&nojsoncallback=1`)
-          .then(response => {
-            this.setState({
-              images: response.data.photos.photo,
-              loading: false
-            });
-          })
-          .catch(error => {
-            console.log('Error fetching and parsing data', error);
-          });
+
+        console.log("Searching for new searchQuery: " + searchQuery);
+        this.fetchData();
       }
     }
+    console.log("--------");
+  }
+
+  fetchData() {
+    axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${searchQuery}&format=json&nojsoncallback=1`)
+      .then(response => {
+        this.setState({
+          images: response.data.photos.photo,
+          loading: false
+        });
+      })
+      .catch(error => {
+        console.log('Error fetching and parsing data', error);
+      });
   }
 
   render() {
@@ -61,20 +72,21 @@ class App extends Component {
           <div className="container">
 
             <Header search={this.performSearch}
-                    history={this.history}/>
+                    history={history}/>
 
             <div className="photo-container">
               {
                 (this.state.loading)
                   ? <p>Loading...</p>
-                  : <Route path="/" render={ () => <Gallery data={this.state.images}
-                                                            query={searchQuery}
-                                                            history={history} /> } />
+                  : <Route exact path="/" render={ () => <Gallery data={this.state.images}
+                                                                  query={searchQuery}
+                                                                  history={history} /> } />
               }
+
               <Route path="/search/:query" render={ (props) => <Gallery data={this.state.images}
-                                                                        search={this.performSearch(props.match.params.query)}
-                                                                        query={props.match.params.query}
-                                                                        history={history} /> } />
+                                                                              search={this.performSearch(props.match.params.query)}
+                                                                              query={props.match.params.query}
+                                                                              history={history} /> } />
             </div>
           </div>
         </Switch>

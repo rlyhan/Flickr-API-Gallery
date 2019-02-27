@@ -6,10 +6,10 @@ import NoResults from './NoResults';
 
 const Gallery = (props) => {
 
+  props.history.push(`/search/${props.query}`);
+
   const results = props.data.slice(0, 24);
   let images;
-
-  props.history.push(`/search/${props.query}`);
 
   if (results.length > 0) {
     images = results.map(image =>
