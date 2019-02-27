@@ -15,6 +15,7 @@ import axios from 'axios';
 import Header from './Components/Header';
 import Gallery from './Components/Gallery';
 import SearchForm from './Components/SearchForm';
+import Error from './Components/Error';
 
 let searchQuery;
 
@@ -82,11 +83,16 @@ class App extends Component {
                                                                   query={searchQuery}
                                                                   history={history} /> } />
               }
+              {
+                (this.state.loading)
+                  ? <p>Loading...</p>
+                  : <Route path="/search/:query" render={ (props) => <Gallery data={this.state.images}
+                                                                                  search={this.performSearch(props.match.params.query)}
+                                                                                  query={props.match.params.query}
+                                                                                  history={history} /> } />
+              }
 
-              <Route path="/search/:query" render={ (props) => <Gallery data={this.state.images}
-                                                                              search={this.performSearch(props.match.params.query)}
-                                                                              query={props.match.params.query}
-                                                                              history={history} /> } />
+              <Route component={Error} />
             </div>
           </div>
         </Switch>
