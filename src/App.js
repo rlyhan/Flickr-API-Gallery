@@ -27,7 +27,8 @@ class App extends Component {
     super();
     this.state = {
       images: [],
-      loading: true
+      loading: true,
+      currentQuery: ""
     };
   }
 
@@ -36,8 +37,7 @@ class App extends Component {
   }
 
   performSearch = (query) => {
-    console.log("new query: " + query);
-    console.log("old searchQuery: " + searchQuery);
+
     if (query == null) {
       searchQuery = "mountains";
       console.log("Searching for " + searchQuery);
@@ -45,25 +45,38 @@ class App extends Component {
     } else {
       if (query != searchQuery) {
         searchQuery = query;
-
         console.log("Searching for new searchQuery: " + searchQuery);
         this.fetchData();
+      } else {
+
       }
     }
-    console.log("--------");
   }
 
   fetchData() {
+    console.log("currentQuery: " + this.state.currentQuery);
     axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${searchQuery}&format=json&nojsoncallback=1`)
       .then(response => {
+        console.log("Fetching " + searchQuery);
+        console.log("--------");
         this.setState({
           images: response.data.photos.photo,
-          loading: false
+          loading: false,
+          currentQuery: searchQuery
         });
       })
       .catch(error => {
         console.log('Error fetching and parsing data', error);
       });
+  }
+
+  repeatSearch() {
+    this.setState({
+      images: [],
+      loading: true,
+      currentQuery: ""
+    });
+
   }
 
   render() {
@@ -83,18 +96,19 @@ class App extends Component {
                                                                   query={searchQuery}
                                                                   history={history} /> } />
               }
-              {
-                (this.state.loading)
-                  ? <p>Loading...</p>
-                  : <Route path="/search/:query" render={ (props) => <Gallery data={this.state.images}
-                                                                                  search={this.performSearch(props.match.params.query)}
-                                                                                  query={props.match.params.query}
-                                                                                  history={history} /> } />
-              }
-
-              <Route component={Error} />
+              <Route path="/home/:query" render={ (props) => <Gallery data={this.state.images}
+                                                                      query={this.state.currentQuery}
+                                                                      url={"/home"}
+                                                                      history={history} /> } />
+              <Route path="/search/:query" render={ (props) => <Gallery data={this.state.images}
+                                                                        search={this.performSearch(props.match.params.query)}
+                                                                        query={this.state.currentQuery}
+                                                                        url={"/search"}
+                                                                        history={history} /> } />
             </div>
+
           </div>
+
         </Switch>
       </BrowserRouter>
     );
