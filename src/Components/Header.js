@@ -1,7 +1,4 @@
 import React from 'react';
-import {
-  Route
-} from 'react-router-dom';
 
 import SearchForm from './SearchForm';
 import Nav from './Nav';

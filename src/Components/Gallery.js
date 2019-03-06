@@ -9,12 +9,9 @@ const Gallery = (props) => {
   const results = props.data.slice(0, 24);
   let images;
 
+  props.history.push(`/search/${props.query}`);
+
   if (results.length > 0) {
-    if (props.url == "/home") {
-      props.history.push(`/home/${props.query}`);
-    } else if (props.url == "/search") {
-      props.history.push(`/search/${props.query}`);
-    }
     images = results.map(image =>
       <Image url={`https://farm${image.farm}.staticflickr.com/${image.server}/${image.id}_${image.secret}.jpg`} key={image.id}/>
     );
@@ -27,7 +24,6 @@ const Gallery = (props) => {
       </li>
     );
   } else {
-    props.history.push(`/error`);
     return (
       <NoResults />
     );
