@@ -15,9 +15,10 @@ import Header from './Components/Header';
 import Gallery from './Components/Gallery';
 
 let searchQuery;
-
+let url = window.location.href;
 const history = createBrowserHistory();
-history.push("/");
+
+
 
 class App extends Component {
 
@@ -28,27 +29,46 @@ class App extends Component {
       loading: true,
       currentQuery: ""
     };
+    history.push(url.split("/")[1]);
+    this.performSearch = this.performSearch.bind(this);
+    this.fetchData = this.fetchData.bind(this);
+    history.listen((location, action) => {
+      searchQuery = location.pathname.split("/search/")[1];
+      if (searchQuery !== this.state.currentQuery) {
+        console.log("Old query: " + this.state.currentQuery);
+        console.log("New query: " + searchQuery);
+        console.log('Route change!');
+        this.fetchData();
+      }
+    });
   }
 
   componentDidMount() {
-    this.performSearch();
+    history.push(url.split("/")[1]);
+    searchQuery = url.split("/search/")[1];
+    this.setState({ currentQuery: searchQuery });
+    this.fetchData();
   }
 
-  performSearch = (query) => {
-    if (query == null) {
+
+
+  performSearch = () => {
+    if (searchQuery == null) {
       searchQuery = "mountains";
       this.fetchData();
     } else {
-      if (query !== searchQuery) {
-        searchQuery = query;
+      if (searchQuery !== this.state.currentQuery) {
         this.fetchData();
       }
     }
   }
 
   fetchData() {
+    console.log("searchQuery: " + searchQuery);
     axios.get(`https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${searchQuery}&format=json&nojsoncallback=1`)
       .then(response => {
+        console.log("Fetching new searchQuery: " + searchQuery);
+        console.log("--------");
         this.setState({
           images: response.data.photos.photo,
           loading: false,
@@ -60,25 +80,26 @@ class App extends Component {
       });
   }
 
+
+
   render() {
     return (
       <BrowserRouter>
         <Switch>
           <div className="container">
 
-            <Header search={this.performSearch}
-                    history={history}/>
+            <Header history={history} />
 
             <div className="photo-container">
               {
                 (this.state.loading)
                   ? <p>Loading...</p>
-                  : <Route exact path="/" render={ () => <Redirect to="/search/mountains" /> } />
+                  : <Route path="/" render={ () => <Redirect to="/search/mountains" /> } />
               }
 
-              <Route path="/search/:query" render={ () => <Gallery data={this.state.images}
-                                                                   query={this.state.currentQuery}
-                                                                   history={history} /> } />
+            <Route path="/search/:query" render={ (props) => <Gallery data={this.state.images}
+                                                                      query={this.state.currentQuery}
+                                                                      history={history} /> } />
             </div>
 
           </div>

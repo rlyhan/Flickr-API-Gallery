@@ -6,10 +6,8 @@ import Nav from './Nav';
 const Header = (props) => {
   return (
     <header>
-      <SearchForm search={props.search}
-                  history={props.history} />
-      <Nav search={props.search}
-           history={props.history}/>
+      <SearchForm history={props.history} />
+      <Nav history={props.history}/>
     </header>
   );
 }
