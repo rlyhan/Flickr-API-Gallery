@@ -60,6 +60,7 @@ input {
 
 .main-nav .active,
 .main-nav a:hover,
+.search-form button .active,
 .search-form button:hover {
   background-color: #275270;
 }
