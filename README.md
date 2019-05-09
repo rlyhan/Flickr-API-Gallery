@@ -1,3 +1,9 @@
+NOTE: In order to use the Flickr API with this app, requires the following steps...
+1. In the /src directory, create a config.js file
+2. Include the following lines:
+   const apiKey = 'your-own-flickr-API-key';
+   export default apiKey;
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
